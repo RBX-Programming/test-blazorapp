@@ -1,0 +1,79 @@
+﻿@page "/clients/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Client</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Client" OnValidSubmit="AddClient" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="id" class="form-label">Id:</label> 
+                <InputNumber id="id" @bind-Value="Client.Id" class="form-control" /> 
+                <ValidationMessage For="() => Client.Id" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="clientfullname" class="form-label">ClientFullName:</label> 
+                <InputText id="clientfullname" @bind-Value="Client.ClientFullName" class="form-control" /> 
+                <ValidationMessage For="() => Client.ClientFullName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="clientbranch" class="form-label">ClientBranch:</label> 
+                <InputNumber id="clientbranch" @bind-Value="Client.ClientBranch" class="form-control" /> 
+                <ValidationMessage For="() => Client.ClientBranch" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="clientreg" class="form-label">ClientReg:</label> 
+                <InputText id="clientreg" @bind-Value="Client.ClientReg" class="form-control" /> 
+                <ValidationMessage For="() => Client.ClientReg" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="clientaddress" class="form-label">ClientAddress:</label> 
+                <InputText id="clientaddress" @bind-Value="Client.ClientAddress" class="form-control" /> 
+                <ValidationMessage For="() => Client.ClientAddress" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="city" class="form-label">City:</label> 
+                <InputText id="city" @bind-Value="Client.City" class="form-control" /> 
+                <ValidationMessage For="() => Client.City" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="countryid" class="form-label">CountryId:</label> 
+                <InputNumber id="countryid" @bind-Value="Client.CountryId" class="form-control" /> 
+                <ValidationMessage For="() => Client.CountryId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="crmid" class="form-label">CrmId:</label> 
+                <InputNumber id="crmid" @bind-Value="Client.CrmId" class="form-control" /> 
+                <ValidationMessage For="() => Client.CrmId" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/clients">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Client Client { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddClient()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Clients.Add(Client);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/clients");
+    }
+}

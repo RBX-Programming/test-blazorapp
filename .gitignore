@@ -1,0 +1,60 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Dd]ist/
+[Dd]ist/BlazorApp/
+[Dd]eploy/
+[Dd]eploy/BlazorApp/
+Release/
+Release/BlazorApp/
+out/
+
+# User-specific files
+.vs/
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer files (binary)
+*.exe
+*.dll
+*.pdb
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# npm packages
+node_modules/
+
+# Blazor-specific build output
+wwwroot/
+bin/
+obj/
+
+# JetBrains Rider
+.idea/
+
+# JetBrains Rider configuration files
+.idea/.idea/
+.idea/.idea_modules/
+
+# VS for Mac
+.vscode/
+.idea/
+
+# User-specific settings for Visual Studio for Mac
+.vsconfig

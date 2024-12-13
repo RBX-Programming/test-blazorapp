@@ -1,0 +1,43 @@
+﻿@page "/clients"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="clients/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Clients">
+    <PropertyColumn Property="client => client.Id" />
+    <PropertyColumn Property="client => client.ClientFullName" />
+    <PropertyColumn Property="client => client.ClientBranch" />
+    <PropertyColumn Property="client => client.ClientReg" />
+    <PropertyColumn Property="client => client.ClientAddress" />
+    <PropertyColumn Property="client => client.City" />
+    <PropertyColumn Property="client => client.CountryId" />
+    <PropertyColumn Property="client => client.CrmId" />
+
+    <TemplateColumn Context="client">
+        <a href="@($"clients/edit?clientshortname={client.ClientShortName}")">Edit</a> |
+        <a href="@($"clients/details?clientshortname={client.ClientShortName}")">Details</a> |
+        <a href="@($"clients/delete?clientshortname={client.ClientShortName}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

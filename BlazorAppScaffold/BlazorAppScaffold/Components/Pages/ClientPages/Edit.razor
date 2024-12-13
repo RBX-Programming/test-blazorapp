@@ -1,0 +1,124 @@
+﻿@page "/clients/edit"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Client</h2>
+<hr />
+@if (Client is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Client" OnValidSubmit="UpdateClient" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Client.ClientShortName" value="@Client.ClientShortName" />
+                <div class="mb-3">
+                    <label for="id" class="form-label">Id:</label>
+                    <InputNumber id="id" @bind-Value="Client.Id" class="form-control" />
+                    <ValidationMessage For="() => Client.Id" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="clientfullname" class="form-label">ClientFullName:</label>
+                    <InputText id="clientfullname" @bind-Value="Client.ClientFullName" class="form-control" />
+                    <ValidationMessage For="() => Client.ClientFullName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="clientbranch" class="form-label">ClientBranch:</label>
+                    <InputNumber id="clientbranch" @bind-Value="Client.ClientBranch" class="form-control" />
+                    <ValidationMessage For="() => Client.ClientBranch" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="clientreg" class="form-label">ClientReg:</label>
+                    <InputText id="clientreg" @bind-Value="Client.ClientReg" class="form-control" />
+                    <ValidationMessage For="() => Client.ClientReg" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="clientaddress" class="form-label">ClientAddress:</label>
+                    <InputText id="clientaddress" @bind-Value="Client.ClientAddress" class="form-control" />
+                    <ValidationMessage For="() => Client.ClientAddress" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="city" class="form-label">City:</label>
+                    <InputText id="city" @bind-Value="Client.City" class="form-control" />
+                    <ValidationMessage For="() => Client.City" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="countryid" class="form-label">CountryId:</label>
+                    <InputNumber id="countryid" @bind-Value="Client.CountryId" class="form-control" />
+                    <ValidationMessage For="() => Client.CountryId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="crmid" class="form-label">CrmId:</label>
+                    <InputNumber id="crmid" @bind-Value="Client.CrmId" class="form-control" />
+                    <ValidationMessage For="() => Client.CrmId" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/clients">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string ClientShortName { get; set; }
+
+    [SupplyParameterFromForm]
+    private Client? Client { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Client ??= await context.Clients.FirstOrDefaultAsync(m => m.ClientShortName == ClientShortName);
+
+        if (Client is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateClient()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Client!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ClientExists(Client!.ClientShortName))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/clients");
+    }
+
+    private bool ClientExists(string clientshortname)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Clients.Any(e => e.ClientShortName == clientshortname);
+    }
+}

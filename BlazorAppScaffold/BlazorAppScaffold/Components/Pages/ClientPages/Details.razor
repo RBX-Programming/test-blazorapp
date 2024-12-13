@@ -1,0 +1,60 @@
+﻿@page "/clients/details"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Client</h2>
+    <hr />
+    @if (client is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Id</dt>
+            <dd class="col-sm-10">@client.Id</dd>
+            <dt class="col-sm-2">ClientFullName</dt>
+            <dd class="col-sm-10">@client.ClientFullName</dd>
+            <dt class="col-sm-2">ClientBranch</dt>
+            <dd class="col-sm-10">@client.ClientBranch</dd>
+            <dt class="col-sm-2">ClientReg</dt>
+            <dd class="col-sm-10">@client.ClientReg</dd>
+            <dt class="col-sm-2">ClientAddress</dt>
+            <dd class="col-sm-10">@client.ClientAddress</dd>
+            <dt class="col-sm-2">City</dt>
+            <dd class="col-sm-10">@client.City</dd>
+            <dt class="col-sm-2">CountryId</dt>
+            <dd class="col-sm-10">@client.CountryId</dd>
+            <dt class="col-sm-2">CrmId</dt>
+            <dd class="col-sm-10">@client.CrmId</dd>
+        </dl>
+        <div>
+            <a href="@($"/clients/edit?clientshortname={client.ClientShortName}")">Edit</a> |
+            <a href="@($"/clients")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Client? client;
+
+    [SupplyParameterFromQuery]
+    private string ClientShortName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        client = await context.Clients.FirstOrDefaultAsync(m => m.ClientShortName == ClientShortName);
+
+        if (client is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}
