@@ -1,0 +1,34 @@
+﻿@page "/branches"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="branches/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Branches">
+    <PropertyColumn Property="branch => branch.Branch1" />
+    <TemplateColumn Context="branch">
+        <a href="@($"branches/edit?id={branch.Id}")">Edit</a> |
+        <a href="@($"branches/details?id={branch.Id}")">Details</a> |
+        <a href="@($"branches/delete?id={branch.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+
+@code {
+    private BlazorAppContext context = default!;
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

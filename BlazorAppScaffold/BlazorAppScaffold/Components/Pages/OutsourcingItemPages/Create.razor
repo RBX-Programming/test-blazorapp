@@ -1,0 +1,99 @@
+﻿@page "/outsourcingitems/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>OutsourcingItem</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="OutsourcingItem" OnValidSubmit="AddOutsourcingItem" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="extinvoiceid" class="form-label">ExtInvoiceId:</label> 
+                <InputNumber id="extinvoiceid" @bind-Value="OutsourcingItem.ExtInvoiceId" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.ExtInvoiceId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="item" class="form-label">Item:</label> 
+                <InputText id="item" @bind-Value="OutsourcingItem.Item" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.Item" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="projecttype" class="form-label">ProjectType:</label> 
+                <InputNumber id="projecttype" @bind-Value="OutsourcingItem.ProjectType" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.ProjectType" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="offereuro" class="form-label">OfferEuro:</label> 
+                <InputNumber id="offereuro" @bind-Value="OutsourcingItem.OfferEuro" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.OfferEuro" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="currencytype" class="form-label">CurrencyType:</label> 
+                <InputNumber id="currencytype" @bind-Value="OutsourcingItem.CurrencyType" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.CurrencyType" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="percentage" class="form-label">Percentage:</label> 
+                <InputNumber id="percentage" @bind-Value="OutsourcingItem.Percentage" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.Percentage" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="offerhours" class="form-label">OfferHours:</label> 
+                <InputNumber id="offerhours" @bind-Value="OutsourcingItem.OfferHours" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.OfferHours" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="departmentsid" class="form-label">DepartmentsId:</label> 
+                <InputNumber id="departmentsid" @bind-Value="OutsourcingItem.DepartmentsId" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.DepartmentsId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="donehours" class="form-label">DoneHours:</label> 
+                <InputNumber id="donehours" @bind-Value="OutsourcingItem.DoneHours" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.DoneHours" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="itemprocessstatus" class="form-label">ItemProcessStatus:</label> 
+                <InputNumber id="itemprocessstatus" @bind-Value="OutsourcingItem.ItemProcessStatus" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.ItemProcessStatus" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="comments" class="form-label">Comments:</label> 
+                <InputText id="comments" @bind-Value="OutsourcingItem.Comments" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.Comments" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="paymentstatusid" class="form-label">PaymentStatusId:</label> 
+                <InputNumber id="paymentstatusid" @bind-Value="OutsourcingItem.PaymentStatusId" class="form-control" /> 
+                <ValidationMessage For="() => OutsourcingItem.PaymentStatusId" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/outsourcingitems">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private OutsourcingItem OutsourcingItem { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddOutsourcingItem()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.OutsourcingItems.Add(OutsourcingItem);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/outsourcingitems");
+    }
+}

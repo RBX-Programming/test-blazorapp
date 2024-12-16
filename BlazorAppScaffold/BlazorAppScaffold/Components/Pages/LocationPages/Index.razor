@@ -1,0 +1,46 @@
+﻿@page "/locations"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="locations/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredLocations">
+    <PropertyColumn Property="location => location.LocationName" Sortable="true"/>
+    <PropertyColumn Property="location => location.CityName" Sortable="true">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="cityFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="location => location.CountryId" Sortable="true"/>
+    <PropertyColumn Property="location => location.Address" />
+
+    <TemplateColumn Context="location">
+        <a href="@($"locations/edit?id={location.Id}")">Edit</a> |
+        <a href="@($"locations/details?id={location.Id}")">Details</a> |
+        <a href="@($"locations/delete?id={location.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string cityFilter = string.Empty;
+    IQueryable<Location> FilteredLocations => context.Locations.Where(location => location.CityName.Contains(cityFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

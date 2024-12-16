@@ -43,11 +43,11 @@ public partial class Expense
 
     public decimal? Total { get; set; }
 
-    public bool? Uploaded { get; set; }
+    public bool Uploaded { get; set; }
 
-    public bool? Paid { get; set; }
+    public bool Paid { get; set; }
 
-    public DateOnly? PaymentDate { get; set; }
+    public DateTime? PaymentDate { get; set; }
 
     public virtual Branch? Branch { get; set; }
 

@@ -1,0 +1,48 @@
+﻿@page "/crms"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="crms/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredCrm">
+    <PropertyColumn Property="crm => crm.CompanyName" >
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="crmFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    <PropertyColumn Property="crm => crm.Name" />
+    <PropertyColumn Property="crm => crm.Email" />
+    <PropertyColumn Property="crm => crm.Phone" />
+    <PropertyColumn Property="crm => crm.JobPosition" />
+
+    <TemplateColumn Context="crm">
+        <a href="@($"crms/edit?id={crm.Id}")">Edit</a> |
+        <a href="@($"crms/details?id={crm.Id}")">Details</a> |
+        <a href="@($"crms/delete?id={crm.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string crmFilter = string.Empty;
+    IQueryable<Crm> FilteredCrm => context.Crms.Where(crm => crm.CompanyName.Contains(crmFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

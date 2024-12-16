@@ -1,0 +1,48 @@
+﻿@page "/outsourcings"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="outsourcings/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredOutsourcings">
+    <PropertyColumn Property="outsourcing => outsourcing.ProjectName" Sortable="true">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="outsourcingFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="outsourcing => outsourcing.Description" />
+    <PropertyColumn Property="outsourcing => outsourcing.Date" />
+    <PropertyColumn Property="outsourcing => outsourcing.DeliveryDate" />
+    <PropertyColumn Property="outsourcing => outsourcing.SupplierShortName" />
+    <PropertyColumn Property="outsourcing => outsourcing.AmountInvoiced" />
+
+    <TemplateColumn Context="outsourcing">
+        <a href="@($"outsourcings/edit?id={outsourcing.Id}")">Edit</a> |
+        <a href="@($"outsourcings/details?id={outsourcing.Id}")">Details</a> |
+        <a href="@($"outsourcings/delete?id={outsourcing.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string outsourcingFilter = string.Empty;
+    IQueryable<Outsourcing> FilteredOutsourcings => context.Outsourcings.Where(outsourcing => outsourcing.ProjectName.Contains(outsourcingFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

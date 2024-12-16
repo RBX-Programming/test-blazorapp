@@ -1,0 +1,64 @@
+﻿@page "/crms/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Crm</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Crm" OnValidSubmit="AddCrm" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="companyname" class="form-label">CompanyName:</label> 
+                <InputText id="companyname" @bind-Value="Crm.CompanyName" class="form-control" /> 
+                <ValidationMessage For="() => Crm.CompanyName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="Crm.Name" class="form-control" /> 
+                <ValidationMessage For="() => Crm.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label> 
+                <InputText id="email" @bind-Value="Crm.Email" class="form-control" /> 
+                <ValidationMessage For="() => Crm.Email" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone:</label> 
+                <InputText id="phone" @bind-Value="Crm.Phone" class="form-control" /> 
+                <ValidationMessage For="() => Crm.Phone" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="jobposition" class="form-label">JobPosition:</label> 
+                <InputText id="jobposition" @bind-Value="Crm.JobPosition" class="form-control" /> 
+                <ValidationMessage For="() => Crm.JobPosition" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/crms">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Crm Crm { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddCrm()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Crms.Add(Crm);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/crms");
+    }
+}

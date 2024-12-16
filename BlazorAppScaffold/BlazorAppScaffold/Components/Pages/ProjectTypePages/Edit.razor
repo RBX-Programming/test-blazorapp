@@ -1,0 +1,89 @@
+﻿@page "/projecttypes/edit"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>ProjectType</h2>
+<hr />
+@if (ProjectType is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="ProjectType" OnValidSubmit="UpdateProjectType" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="ProjectType.Id" value="@ProjectType.Id" />
+                <div class="mb-3">
+                    <label for="type" class="form-label">Type:</label>
+                    <InputText id="type" @bind-Value="ProjectType.Type" class="form-control" />
+                    <ValidationMessage For="() => ProjectType.Type" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/projecttypes">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private ProjectType? ProjectType { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        ProjectType ??= await context.ProjectTypes.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (ProjectType is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateProjectType()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(ProjectType!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ProjectTypeExists(ProjectType!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/projecttypes");
+    }
+
+    private bool ProjectTypeExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.ProjectTypes.Any(e => e.Id == id);
+    }
+}

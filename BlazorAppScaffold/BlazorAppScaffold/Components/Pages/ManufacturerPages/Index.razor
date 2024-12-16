@@ -1,0 +1,43 @@
+﻿@page "/manufacturers"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="manufacturers/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredManufacturers">
+    <PropertyColumn Property="manufacturer => manufacturer.ManufacturerName" Sortable="true" >
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="manufacturerFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    <TemplateColumn Context="manufacturer">
+        <a href="@($"manufacturers/edit?id={manufacturer.Id}")">Edit</a> |
+        <a href="@($"manufacturers/details?id={manufacturer.Id}")">Details</a> |
+        <a href="@($"manufacturers/delete?id={manufacturer.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+
+@code {
+    private BlazorAppContext context = default!;
+    string manufacturerFilter = string.Empty;
+    IQueryable<Manufacturer> FilteredManufacturers => context.Manufacturers.Where(manufacturer => manufacturer.ManufacturerName.Contains(manufacturerFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

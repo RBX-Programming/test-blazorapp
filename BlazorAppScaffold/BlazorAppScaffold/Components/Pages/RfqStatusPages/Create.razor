@@ -1,0 +1,44 @@
+﻿@page "/rfqstatuses/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>RfqStatus</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="RfqStatus" OnValidSubmit="AddRfqStatus" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="rfqstatus1" class="form-label">RfqStatus1:</label> 
+                <InputText id="rfqstatus1" @bind-Value="RfqStatus.RfqStatus1" class="form-control" /> 
+                <ValidationMessage For="() => RfqStatus.RfqStatus1" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/rfqstatuses">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private RfqStatus RfqStatus { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddRfqStatus()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.RfqStatuses.Add(RfqStatus);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/rfqstatuses");
+    }
+}

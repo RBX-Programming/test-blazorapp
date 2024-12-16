@@ -1,0 +1,37 @@
+﻿@page "/typeofworks"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="typeofworks/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.TypeOfWorks">
+    <PropertyColumn Property="typeofwork => typeofwork.TypeOfWork1" Sortable="true"/>
+
+    <TemplateColumn Context="typeofwork">
+        <a href="@($"typeofworks/edit?id={typeofwork.Id}")">Edit</a> |
+        <a href="@($"typeofworks/details?id={typeofwork.Id}")">Details</a> |
+        <a href="@($"typeofworks/delete?id={typeofwork.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+
+@code {
+    private BlazorAppContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

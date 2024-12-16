@@ -1,0 +1,75 @@
+﻿@page "/outsourcings/delete"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>Outsourcing</h2>
+    <hr />
+    @if (outsourcing is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ProjectName</dt>
+            <dd class="col-sm-10">@outsourcing.ProjectName</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@outsourcing.Description</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Date</dt>
+            <dd class="col-sm-10">@outsourcing.Date</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">DeliveryDate</dt>
+            <dd class="col-sm-10">@outsourcing.DeliveryDate</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">SupplierShortName</dt>
+            <dd class="col-sm-10">@outsourcing.SupplierShortName</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">AmountInvoiced</dt>
+            <dd class="col-sm-10">@outsourcing.AmountInvoiced</dd>
+        </dl>
+        <EditForm method="post" Model="outsourcing" OnValidSubmit="DeleteOutsourcing" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(outsourcing is null)">Delete</button> |
+            <a href="/outsourcings">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private Outsourcing? outsourcing;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        outsourcing = await context.Outsourcings.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (outsourcing is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteOutsourcing()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Outsourcings.Remove(outsourcing!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/outsourcings");
+    }
+}

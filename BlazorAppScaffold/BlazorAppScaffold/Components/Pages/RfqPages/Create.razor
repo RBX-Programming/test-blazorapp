@@ -1,0 +1,74 @@
+﻿@page "/rfqs/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Rfq</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Rfq" OnValidSubmit="AddRfq" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="rfqname" class="form-label">RfqName:</label> 
+                <InputText id="rfqname" @bind-Value="Rfq.RfqName" class="form-control" /> 
+                <ValidationMessage For="() => Rfq.RfqName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="date" class="form-label">Date:</label> 
+                <InputDate id="date" @bind-Value="Rfq.Date" class="form-control" /> 
+                <ValidationMessage For="() => Rfq.Date" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="branchid" class="form-label">BranchId:</label> 
+                <InputNumber id="branchid" @bind-Value="Rfq.BranchId" class="form-control" /> 
+                <ValidationMessage For="() => Rfq.BranchId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="clientshortname" class="form-label">ClientShortName:</label> 
+                <InputText id="clientshortname" @bind-Value="Rfq.ClientShortName" class="form-control" /> 
+                <ValidationMessage For="() => Rfq.ClientShortName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label> 
+                <InputText id="description" @bind-Value="Rfq.Description" class="form-control" /> 
+                <ValidationMessage For="() => Rfq.Description" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="rfqfoldername" class="form-label">RfqFolderName:</label> 
+                <InputText id="rfqfoldername" @bind-Value="Rfq.RfqFolderName" class="form-control" /> 
+                <ValidationMessage For="() => Rfq.RfqFolderName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="rfqstatus" class="form-label">RfqStatus:</label> 
+                <InputNumber id="rfqstatus" @bind-Value="Rfq.RfqStatus" class="form-control" /> 
+                <ValidationMessage For="() => Rfq.RfqStatus" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/rfqs">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Rfq Rfq { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddRfq()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Rfqs.Add(Rfq);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/rfqs");
+    }
+}

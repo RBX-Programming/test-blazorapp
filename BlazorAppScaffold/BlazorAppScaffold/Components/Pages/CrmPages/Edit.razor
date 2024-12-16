@@ -1,0 +1,109 @@
+﻿@page "/crms/edit"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Crm</h2>
+<hr />
+@if (Crm is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Crm" OnValidSubmit="UpdateCrm" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Crm.Id" value="@Crm.Id" />
+                <div class="mb-3">
+                    <label for="companyname" class="form-label">CompanyName:</label>
+                    <InputText id="companyname" @bind-Value="Crm.CompanyName" class="form-control" />
+                    <ValidationMessage For="() => Crm.CompanyName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="Crm.Name" class="form-control" />
+                    <ValidationMessage For="() => Crm.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="Crm.Email" class="form-control" />
+                    <ValidationMessage For="() => Crm.Email" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone:</label>
+                    <InputText id="phone" @bind-Value="Crm.Phone" class="form-control" />
+                    <ValidationMessage For="() => Crm.Phone" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="jobposition" class="form-label">JobPosition:</label>
+                    <InputText id="jobposition" @bind-Value="Crm.JobPosition" class="form-control" />
+                    <ValidationMessage For="() => Crm.JobPosition" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/crms">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Crm? Crm { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Crm ??= await context.Crms.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Crm is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateCrm()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Crm!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!CrmExists(Crm!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/crms");
+    }
+
+    private bool CrmExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Crms.Any(e => e.Id == id);
+    }
+}

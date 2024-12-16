@@ -1,0 +1,54 @@
+﻿@page "/outsourcingitems"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="outsourcingitems/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredOutsourcings">
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.ExtInvoiceId" Sortable="true" >
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="outsourcingFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.Item" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.ProjectType" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.OfferEuro" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.CurrencyType" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.Percentage" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.OfferHours" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.DepartmentsId" Sortable="true" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.DoneHours" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.ItemProcessStatus" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.Comments" />
+    <PropertyColumn Property="outsourcingitem => outsourcingitem.PaymentStatusId" Sortable="true" />
+
+    <TemplateColumn Context="outsourcingitem">
+        <a href="@($"outsourcingitems/edit?id={outsourcingitem.Id}")">Edit</a> |
+        <a href="@($"outsourcingitems/details?id={outsourcingitem.Id}")">Details</a> |
+        <a href="@($"outsourcingitems/delete?id={outsourcingitem.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string outsourcingFilter = string.Empty;
+    IQueryable<OutsourcingItem> FilteredOutsourcings => context.OutsourcingItems.Where(outsourcingItem => outsourcingItem.ExtInvoiceId.ToString().Contains(outsourcingFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

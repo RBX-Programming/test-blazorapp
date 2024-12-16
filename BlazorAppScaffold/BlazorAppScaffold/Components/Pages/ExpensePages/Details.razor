@@ -1,0 +1,86 @@
+﻿@page "/expenses/details"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Expense</h2>
+    <hr />
+    @if (expense is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ProjectName</dt>
+            <dd class="col-sm-10">@expense.ProjectName</dd>
+            <dt class="col-sm-2">Comments</dt>
+            <dd class="col-sm-10">@expense.Comments</dd>
+            <dt class="col-sm-2">BranchId</dt>
+            <dd class="col-sm-10">@expense.BranchId</dd>
+            <dt class="col-sm-2">ValidatorId</dt>
+            <dd class="col-sm-10">@expense.ValidatorId</dd>
+            <dt class="col-sm-2">RequesterId</dt>
+            <dd class="col-sm-10">@expense.RequesterId</dd>
+            <dt class="col-sm-2">CostTypesId</dt>
+            <dd class="col-sm-10">@expense.CostTypesId</dd>
+            <dt class="col-sm-2">CostCategoriesId</dt>
+            <dd class="col-sm-10">@expense.CostCategoriesId</dd>
+            <dt class="col-sm-2">DepartmentsId</dt>
+            <dd class="col-sm-10">@expense.DepartmentsId</dd>
+            <dt class="col-sm-2">Date</dt>
+            <dd class="col-sm-10">@expense.Date</dd>
+            <dt class="col-sm-2">PaymentTerms</dt>
+            <dd class="col-sm-10">@expense.PaymentTerms</dd>
+            <dt class="col-sm-2">DueDate</dt>
+            <dd class="col-sm-10">@expense.DueDate</dd>
+            <dt class="col-sm-2">Cost</dt>
+            <dd class="col-sm-10">@expense.Cost</dd>
+            <dt class="col-sm-2">CurrencyType</dt>
+            <dd class="col-sm-10">@expense.CurrencyType</dd>
+            <dt class="col-sm-2">ExchangeRate</dt>
+            <dd class="col-sm-10">@expense.ExchangeRate</dd>
+            <dt class="col-sm-2">NetEuro</dt>
+            <dd class="col-sm-10">@expense.NetEuro</dd>
+            <dt class="col-sm-2">Vat</dt>
+            <dd class="col-sm-10">@expense.Vat</dd>
+            <dt class="col-sm-2">VatEuro</dt>
+            <dd class="col-sm-10">@expense.VatEuro</dd>
+            <dt class="col-sm-2">Total</dt>
+            <dd class="col-sm-10">@expense.Total</dd>
+            <dt class="col-sm-2">Uploaded</dt>
+            <dd class="col-sm-10">@expense.Uploaded</dd>
+            <dt class="col-sm-2">Paid</dt>
+            <dd class="col-sm-10">@expense.Paid</dd>
+            <dt class="col-sm-2">PaymentDate</dt>
+            <dd class="col-sm-10">@expense.PaymentDate</dd>
+        </dl>
+        <div>
+            <a href="@($"/expenses/edit?id={expense.Id}")">Edit</a> |
+            <a href="@($"/expenses")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Expense? expense;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        expense = await context.Expenses.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (expense is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

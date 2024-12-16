@@ -1,0 +1,89 @@
+﻿@page "/processstatuses/edit"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>ProcessStatus</h2>
+<hr />
+@if (ProcessStatus is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="ProcessStatus" OnValidSubmit="UpdateProcessStatus" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="ProcessStatus.Id" value="@ProcessStatus.Id" />
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status:</label>
+                    <InputText id="status" @bind-Value="ProcessStatus.Status" class="form-control" />
+                    <ValidationMessage For="() => ProcessStatus.Status" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/processstatuses">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private ProcessStatus? ProcessStatus { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        ProcessStatus ??= await context.ProcessStatuses.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (ProcessStatus is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateProcessStatus()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(ProcessStatus!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ProcessStatusExists(ProcessStatus!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/processstatuses");
+    }
+
+    private bool ProcessStatusExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.ProcessStatuses.Any(e => e.Id == id);
+    }
+}

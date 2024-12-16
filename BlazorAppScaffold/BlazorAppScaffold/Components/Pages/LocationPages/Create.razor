@@ -1,0 +1,59 @@
+﻿@page "/locations/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Location</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Location" OnValidSubmit="AddLocation" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="locationname" class="form-label">LocationName:</label> 
+                <InputText id="locationname" @bind-Value="Location.LocationName" class="form-control" /> 
+                <ValidationMessage For="() => Location.LocationName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="cityname" class="form-label">CityName:</label> 
+                <InputText id="cityname" @bind-Value="Location.CityName" class="form-control" /> 
+                <ValidationMessage For="() => Location.CityName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="countryid" class="form-label">CountryId:</label> 
+                <InputNumber id="countryid" @bind-Value="Location.CountryId" class="form-control" /> 
+                <ValidationMessage For="() => Location.CountryId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="address" class="form-label">Address:</label> 
+                <InputText id="address" @bind-Value="Location.Address" class="form-control" /> 
+                <ValidationMessage For="() => Location.Address" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/locations">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Location Location { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddLocation()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Locations.Add(Location);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/locations");
+    }
+}

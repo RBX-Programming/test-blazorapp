@@ -1,0 +1,44 @@
+﻿@page "/manufacturers/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Manufacturer</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Manufacturer" OnValidSubmit="AddManufacturer" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="manufacturername" class="form-label">ManufacturerName:</label> 
+                <InputText id="manufacturername" @bind-Value="Manufacturer.ManufacturerName" class="form-control" /> 
+                <ValidationMessage For="() => Manufacturer.ManufacturerName" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/manufacturers">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Manufacturer Manufacturer { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddManufacturer()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Manufacturers.Add(Manufacturer);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/manufacturers");
+    }
+}

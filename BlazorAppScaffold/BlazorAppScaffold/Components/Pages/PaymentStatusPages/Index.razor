@@ -1,0 +1,36 @@
+﻿@page "/paymentstatuses"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="paymentstatuses/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.PaymentStatuses">
+    <PropertyColumn Property="paymentstatus => paymentstatus.Status" Sortable="true"/>
+
+    <TemplateColumn Context="paymentstatus">
+        <a href="@($"paymentstatuses/edit?id={paymentstatus.Id}")">Edit</a> |
+        <a href="@($"paymentstatuses/details?id={paymentstatus.Id}")">Details</a> |
+        <a href="@($"paymentstatuses/delete?id={paymentstatus.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+
+@code {
+    private BlazorAppContext context = default!;
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

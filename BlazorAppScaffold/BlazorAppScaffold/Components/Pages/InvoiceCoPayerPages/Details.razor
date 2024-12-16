@@ -1,0 +1,48 @@
+﻿@page "/invoicecopayers/details"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>InvoiceCoPayer</h2>
+    <hr />
+    @if (invoicecopayer is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">CoPayersNumber</dt>
+            <dd class="col-sm-10">@invoicecopayer.CoPayersNumber</dd>
+            <dt class="col-sm-2">ClientShortName</dt>
+            <dd class="col-sm-10">@invoicecopayer.ClientShortName</dd>
+        </dl>
+        <div>
+            <a href="@($"/invoicecopayers/edit?id={invoicecopayer.Id}")">Edit</a> |
+            <a href="@($"/invoicecopayers")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private InvoiceCoPayer? invoicecopayer;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        invoicecopayer = await context.InvoiceCoPayers.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (invoicecopayer is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

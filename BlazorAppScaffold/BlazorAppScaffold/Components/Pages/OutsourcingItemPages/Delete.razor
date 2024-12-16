@@ -1,0 +1,99 @@
+﻿@page "/outsourcingitems/delete"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>OutsourcingItem</h2>
+    <hr />
+    @if (outsourcingitem is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ExtInvoiceId</dt>
+            <dd class="col-sm-10">@outsourcingitem.ExtInvoiceId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Item</dt>
+            <dd class="col-sm-10">@outsourcingitem.Item</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ProjectType</dt>
+            <dd class="col-sm-10">@outsourcingitem.ProjectType</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">OfferEuro</dt>
+            <dd class="col-sm-10">@outsourcingitem.OfferEuro</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">CurrencyType</dt>
+            <dd class="col-sm-10">@outsourcingitem.CurrencyType</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Percentage</dt>
+            <dd class="col-sm-10">@outsourcingitem.Percentage</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">OfferHours</dt>
+            <dd class="col-sm-10">@outsourcingitem.OfferHours</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">DepartmentsId</dt>
+            <dd class="col-sm-10">@outsourcingitem.DepartmentsId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">DoneHours</dt>
+            <dd class="col-sm-10">@outsourcingitem.DoneHours</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ItemProcessStatus</dt>
+            <dd class="col-sm-10">@outsourcingitem.ItemProcessStatus</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Comments</dt>
+            <dd class="col-sm-10">@outsourcingitem.Comments</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">PaymentStatusId</dt>
+            <dd class="col-sm-10">@outsourcingitem.PaymentStatusId</dd>
+        </dl>
+        <EditForm method="post" Model="outsourcingitem" OnValidSubmit="DeleteOutsourcingItem" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(outsourcingitem is null)">Delete</button> |
+            <a href="/outsourcingitems">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private OutsourcingItem? outsourcingitem;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        outsourcingitem = await context.OutsourcingItems.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (outsourcingitem is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteOutsourcingItem()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.OutsourcingItems.Remove(outsourcingitem!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/outsourcingitems");
+    }
+}

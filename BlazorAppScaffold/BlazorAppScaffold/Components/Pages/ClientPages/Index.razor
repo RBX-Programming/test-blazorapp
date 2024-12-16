@@ -5,6 +5,7 @@
 @using BlazorAppScaffold.Data
 @implements IAsyncDisposable
 @inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
 
 <PageTitle>Index</PageTitle>
 
@@ -14,15 +15,22 @@
     <a href="clients/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Clients">
-    <PropertyColumn Property="client => client.Id" />
+<QuickGrid Class="table" Items="filteredClients">
+    <PropertyColumn Property="client => client.Id" Sortable="true">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="idFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
     <PropertyColumn Property="client => client.ClientFullName" />
     <PropertyColumn Property="client => client.ClientBranch" />
     <PropertyColumn Property="client => client.ClientReg" />
     <PropertyColumn Property="client => client.ClientAddress" />
     <PropertyColumn Property="client => client.City" />
-    <PropertyColumn Property="client => client.CountryId" />
-    <PropertyColumn Property="client => client.CrmId" />
+    <PropertyColumn Property="client => client.CountryId" Sortable="true" />
+    <PropertyColumn Property="client => client.CrmId" Sortable="true" />
 
     <TemplateColumn Context="client">
         <a href="@($"clients/edit?clientshortname={client.ClientShortName}")">Edit</a> |
@@ -31,13 +39,14 @@
     </TemplateColumn>
 </QuickGrid>
 
+
 @code {
     private BlazorAppContext context = default!;
-
+    string idFilter = string.Empty;
+    IQueryable<Client> filteredClients => context.Clients.Where(client => client.Id.ToString().Contains(idFilter));
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
     }
-
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }

@@ -1,0 +1,46 @@
+﻿@page "/rfqstatuses/details"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>RfqStatus</h2>
+    <hr />
+    @if (rfqstatus is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">RfqStatus1</dt>
+            <dd class="col-sm-10">@rfqstatus.RfqStatus1</dd>
+        </dl>
+        <div>
+            <a href="@($"/rfqstatuses/edit?id={rfqstatus.Id}")">Edit</a> |
+            <a href="@($"/rfqstatuses")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private RfqStatus? rfqstatus;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        rfqstatus = await context.RfqStatuses.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (rfqstatus is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

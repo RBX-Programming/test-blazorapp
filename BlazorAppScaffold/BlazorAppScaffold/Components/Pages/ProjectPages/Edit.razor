@@ -1,0 +1,169 @@
+﻿@page "/projects/edit"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Project</h2>
+<hr />
+@if (Project is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Project" OnValidSubmit="UpdateProject" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Project.ProjectName" value="@Project.ProjectName" />
+                <div class="mb-3">
+                    <label for="id" class="form-label">Id:</label>
+                    <InputNumber id="id" @bind-Value="Project.Id" class="form-control" />
+                    <ValidationMessage For="() => Project.Id" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date:</label>
+                    <InputDate id="date" @bind-Value="Project.Date" class="form-control" />
+                    <ValidationMessage For="() => Project.Date" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputText id="description" @bind-Value="Project.Description" class="form-control" />
+                    <ValidationMessage For="() => Project.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="branchid" class="form-label">BranchId:</label>
+                    <InputNumber id="branchid" @bind-Value="Project.BranchId" class="form-control" />
+                    <ValidationMessage For="() => Project.BranchId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="projectstatusid" class="form-label">ProjectStatusId:</label>
+                    <InputNumber id="projectstatusid" @bind-Value="Project.ProjectStatusId" class="form-control" />
+                    <ValidationMessage For="() => Project.ProjectStatusId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="clientshortname" class="form-label">ClientShortName:</label>
+                    <InputText id="clientshortname" @bind-Value="Project.ClientShortName" class="form-control" />
+                    <ValidationMessage For="() => Project.ClientShortName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="manufacturerid" class="form-label">ManufacturerId:</label>
+                    <InputNumber id="manufacturerid" @bind-Value="Project.ManufacturerId" class="form-control" />
+                    <ValidationMessage For="() => Project.ManufacturerId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="locationid" class="form-label">LocationId:</label>
+                    <InputNumber id="locationid" @bind-Value="Project.LocationId" class="form-control" />
+                    <ValidationMessage For="() => Project.LocationId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="startdate" class="form-label">StartDate:</label>
+                    <InputDate id="startdate" @bind-Value="Project.StartDate" class="form-control" />
+                    <ValidationMessage For="() => Project.StartDate" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="finishdate" class="form-label">FinishDate:</label>
+                    <InputDate id="finishdate" @bind-Value="Project.FinishDate" class="form-control" />
+                    <ValidationMessage For="() => Project.FinishDate" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="models" class="form-label">Models:</label>
+                    <InputNumber id="models" @bind-Value="Project.Models" class="form-control" />
+                    <ValidationMessage For="() => Project.Models" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="plcs" class="form-label">Plcs:</label>
+                    <InputNumber id="plcs" @bind-Value="Project.Plcs" class="form-control" />
+                    <ValidationMessage For="() => Project.Plcs" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="robots" class="form-label">Robots:</label>
+                    <InputNumber id="robots" @bind-Value="Project.Robots" class="form-control" />
+                    <ValidationMessage For="() => Project.Robots" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="revenue" class="form-label">Revenue:</label>
+                    <InputNumber id="revenue" @bind-Value="Project.Revenue" class="form-control" />
+                    <ValidationMessage For="() => Project.Revenue" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="projectowner" class="form-label">ProjectOwner:</label>
+                    <InputNumber id="projectowner" @bind-Value="Project.ProjectOwner" class="form-control" />
+                    <ValidationMessage For="() => Project.ProjectOwner" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="projectmanager" class="form-label">ProjectManager:</label>
+                    <InputNumber id="projectmanager" @bind-Value="Project.ProjectManager" class="form-control" />
+                    <ValidationMessage For="() => Project.ProjectManager" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="projecttypeid" class="form-label">ProjectTypeId:</label>
+                    <InputNumber id="projecttypeid" @bind-Value="Project.ProjectTypeId" class="form-control" />
+                    <ValidationMessage For="() => Project.ProjectTypeId" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/projects">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string ProjectName { get; set; }
+
+    [SupplyParameterFromForm]
+    private Project? Project { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Project ??= await context.Projects.FirstOrDefaultAsync(m => m.ProjectName == ProjectName);
+
+        if (Project is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateProject()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Project!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ProjectExists(Project!.ProjectName))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/projects");
+    }
+
+    private bool ProjectExists(string projectname)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Projects.Any(e => e.ProjectName == projectname);
+    }
+}

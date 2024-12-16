@@ -1,0 +1,89 @@
+﻿@page "/suppliers/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Supplier</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Supplier" OnValidSubmit="AddSupplier" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="id" class="form-label">Id:</label> 
+                <InputNumber id="id" @bind-Value="Supplier.Id" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.Id" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="supplierfullname" class="form-label">SupplierFullName:</label> 
+                <InputText id="supplierfullname" @bind-Value="Supplier.SupplierFullName" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.SupplierFullName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="supplierbranch" class="form-label">SupplierBranch:</label> 
+                <InputNumber id="supplierbranch" @bind-Value="Supplier.SupplierBranch" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.SupplierBranch" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="supplierreg" class="form-label">SupplierReg:</label> 
+                <InputText id="supplierreg" @bind-Value="Supplier.SupplierReg" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.SupplierReg" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="supplieraddress" class="form-label">SupplierAddress:</label> 
+                <InputText id="supplieraddress" @bind-Value="Supplier.SupplierAddress" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.SupplierAddress" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="city" class="form-label">City:</label> 
+                <InputText id="city" @bind-Value="Supplier.City" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.City" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="countryid" class="form-label">CountryId:</label> 
+                <InputNumber id="countryid" @bind-Value="Supplier.CountryId" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.CountryId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="supplieraccount" class="form-label">SupplierAccount:</label> 
+                <InputText id="supplieraccount" @bind-Value="Supplier.SupplierAccount" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.SupplierAccount" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="supplierswift" class="form-label">SupplierSwift:</label> 
+                <InputText id="supplierswift" @bind-Value="Supplier.SupplierSwift" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.SupplierSwift" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="crmid" class="form-label">CrmId:</label> 
+                <InputNumber id="crmid" @bind-Value="Supplier.CrmId" class="form-control" /> 
+                <ValidationMessage For="() => Supplier.CrmId" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/suppliers">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Supplier Supplier { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddSupplier()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Suppliers.Add(Supplier);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/suppliers");
+    }
+}

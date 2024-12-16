@@ -1,0 +1,46 @@
+﻿@page "/projecttypes/details"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>ProjectType</h2>
+    <hr />
+    @if (projecttype is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Type</dt>
+            <dd class="col-sm-10">@projecttype.Type</dd>
+        </dl>
+        <div>
+            <a href="@($"/projecttypes/edit?id={projecttype.Id}")">Edit</a> |
+            <a href="@($"/projecttypes")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private ProjectType? projecttype;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        projecttype = await context.ProjectTypes.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (projecttype is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

@@ -1,0 +1,63 @@
+﻿@page "/extinvoices"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="extinvoices/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredInvoices">
+    <PropertyColumn Property="extinvoice => extinvoice.Id" Sortable="true" />
+    <PropertyColumn Property="extinvoice => extinvoice.RbxPoNumber" Sortable="true">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="invoiceFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="extinvoice => extinvoice.BranchId" />
+    <PropertyColumn Property="extinvoice => extinvoice.SupplierShortName" />
+    <PropertyColumn Property="extinvoice => extinvoice.ProjectName" />
+    <PropertyColumn Property="extinvoice => extinvoice.Comments" />
+    <PropertyColumn Property="extinvoice => extinvoice.ExpirationDate" />
+    <PropertyColumn Property="extinvoice => extinvoice.PaymentTerms" />
+    <PropertyColumn Property="extinvoice => extinvoice.DueDate" />
+    <PropertyColumn Property="extinvoice => extinvoice.TotalNet" />
+    <PropertyColumn Property="extinvoice => extinvoice.CurrencyType" />
+    <PropertyColumn Property="extinvoice => extinvoice.ExchangeRate" />
+    <PropertyColumn Property="extinvoice => extinvoice.NetEuro" />
+    <PropertyColumn Property="extinvoice => extinvoice.Vat" />
+    <PropertyColumn Property="extinvoice => extinvoice.TotalEuro" />
+    <PropertyColumn Property="extinvoice => extinvoice.DepartmentsId" />
+    <PropertyColumn Property="extinvoice => extinvoice.Uploaded" />
+    <PropertyColumn Property="extinvoice => extinvoice.Paid" />
+    <PropertyColumn Property="extinvoice => extinvoice.PaymentDate" />
+    <PropertyColumn Property="extinvoice => extinvoice.PaymentDays" />
+    <PropertyColumn Property="extinvoice => extinvoice.Concept" />
+
+    <TemplateColumn Context="extinvoice">
+        <a href="@($"extinvoices/edit?rbxinvnumber={extinvoice.RbxInvNumber}")">Edit</a> |
+        <a href="@($"extinvoices/details?rbxinvnumber={extinvoice.RbxInvNumber}")">Details</a> |
+        <a href="@($"extinvoices/delete?rbxinvnumber={extinvoice.RbxInvNumber}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string invoiceFilter = string.Empty;
+    IQueryable<ExtInvoice> FilteredInvoices => context.ExtInvoices.Where(invoice => invoice.RbxPoNumber.Contains(invoiceFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

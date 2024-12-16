@@ -1,0 +1,44 @@
+﻿@page "/countries"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="countries/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredCountries">
+    <PropertyColumn Property="country => country.CountryName" />
+    <PropertyColumn Property="country => country.ContinentId" Sortable="true">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="countryFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    <TemplateColumn Context="country">
+        <a href="@($"countries/edit?id={country.Id}")">Edit</a> |
+        <a href="@($"countries/details?id={country.Id}")">Details</a> |
+        <a href="@($"countries/delete?id={country.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string countryFilter = string.Empty;
+    IQueryable<Country> FilteredCountries => context.Countries.Where(country => country.ContinentId.ToString().Contains(countryFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

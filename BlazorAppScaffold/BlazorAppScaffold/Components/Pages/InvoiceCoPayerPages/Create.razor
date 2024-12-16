@@ -1,0 +1,49 @@
+﻿@page "/invoicecopayers/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>InvoiceCoPayer</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="InvoiceCoPayer" OnValidSubmit="AddInvoiceCoPayer" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="copayersnumber" class="form-label">CoPayersNumber:</label> 
+                <InputNumber id="copayersnumber" @bind-Value="InvoiceCoPayer.CoPayersNumber" class="form-control" /> 
+                <ValidationMessage For="() => InvoiceCoPayer.CoPayersNumber" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="clientshortname" class="form-label">ClientShortName:</label> 
+                <InputText id="clientshortname" @bind-Value="InvoiceCoPayer.ClientShortName" class="form-control" /> 
+                <ValidationMessage For="() => InvoiceCoPayer.ClientShortName" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/invoicecopayers">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private InvoiceCoPayer InvoiceCoPayer { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddInvoiceCoPayer()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.InvoiceCoPayers.Add(InvoiceCoPayer);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/invoicecopayers");
+    }
+}

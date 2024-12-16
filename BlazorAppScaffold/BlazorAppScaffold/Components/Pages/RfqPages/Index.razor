@@ -1,0 +1,50 @@
+﻿@page "/rfqs"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="rfqs/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredRfq">
+    <PropertyColumn Property="rfq => rfq.RfqName" Sortable="true">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="rfqFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    <PropertyColumn Property="rfq => rfq.Date" />
+    <PropertyColumn Property="rfq => rfq.BranchId" Sortable="true"/>
+    <PropertyColumn Property="rfq => rfq.ClientShortName" />
+    <PropertyColumn Property="rfq => rfq.Description" />
+    <PropertyColumn Property="rfq => rfq.RfqFolderName" />
+    <PropertyColumn Property="rfq => rfq.RfqStatus" />
+
+    <TemplateColumn Context="rfq">
+        <a href="@($"rfqs/edit?id={rfq.Id}")">Edit</a> |
+        <a href="@($"rfqs/details?id={rfq.Id}")">Details</a> |
+        <a href="@($"rfqs/delete?id={rfq.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string rfqFilter = string.Empty;
+    IQueryable<Rfq> FilteredRfq => context.Rfqs.Where(rfq => rfq.RfqName.Contains(rfqFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

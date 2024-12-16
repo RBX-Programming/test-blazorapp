@@ -1,0 +1,89 @@
+﻿@page "/branches/edit"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Branch</h2>
+<hr />
+@if (Branch is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Branch" OnValidSubmit="UpdateBranch" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Branch.Id" value="@Branch.Id" />
+                <div class="mb-3">
+                    <label for="branch1" class="form-label">Branch1:</label>
+                    <InputText id="branch1" @bind-Value="Branch.Branch1" class="form-control" />
+                    <ValidationMessage For="() => Branch.Branch1" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/branches">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Branch? Branch { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Branch ??= await context.Branches.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Branch is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateBranch()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Branch!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!BranchExists(Branch!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/branches");
+    }
+
+    private bool BranchExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Branches.Any(e => e.Id == id);
+    }
+}

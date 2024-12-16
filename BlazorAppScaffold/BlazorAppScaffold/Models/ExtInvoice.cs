@@ -39,11 +39,11 @@ public partial class ExtInvoice
 
     public int? DepartmentsId { get; set; }
 
-    public bool? Uploaded { get; set; }
+    public bool Uploaded { get; set; }
 
-    public bool? Paid { get; set; }
+    public bool Paid { get; set; }
 
-    public DateOnly? PaymentDate { get; set; }
+    public DateTime PaymentDate { get; set; }
 
     public int? PaymentDays { get; set; }
 

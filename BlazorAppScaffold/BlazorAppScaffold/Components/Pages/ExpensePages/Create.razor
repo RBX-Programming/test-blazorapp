@@ -1,0 +1,144 @@
+﻿@page "/expenses/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Expense</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Expense" OnValidSubmit="AddExpense" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="projectname" class="form-label">ProjectName:</label> 
+                <InputText id="projectname" @bind-Value="Expense.ProjectName" class="form-control" /> 
+                <ValidationMessage For="() => Expense.ProjectName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="comments" class="form-label">Comments:</label> 
+                <InputText id="comments" @bind-Value="Expense.Comments" class="form-control" /> 
+                <ValidationMessage For="() => Expense.Comments" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="branchid" class="form-label">BranchId:</label> 
+                <InputNumber id="branchid" @bind-Value="Expense.BranchId" class="form-control" /> 
+                <ValidationMessage For="() => Expense.BranchId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="validatorid" class="form-label">ValidatorId:</label> 
+                <InputNumber id="validatorid" @bind-Value="Expense.ValidatorId" class="form-control" /> 
+                <ValidationMessage For="() => Expense.ValidatorId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="requesterid" class="form-label">RequesterId:</label> 
+                <InputNumber id="requesterid" @bind-Value="Expense.RequesterId" class="form-control" /> 
+                <ValidationMessage For="() => Expense.RequesterId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="costtypesid" class="form-label">CostTypesId:</label> 
+                <InputNumber id="costtypesid" @bind-Value="Expense.CostTypesId" class="form-control" /> 
+                <ValidationMessage For="() => Expense.CostTypesId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="costcategoriesid" class="form-label">CostCategoriesId:</label> 
+                <InputNumber id="costcategoriesid" @bind-Value="Expense.CostCategoriesId" class="form-control" /> 
+                <ValidationMessage For="() => Expense.CostCategoriesId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="departmentsid" class="form-label">DepartmentsId:</label> 
+                <InputNumber id="departmentsid" @bind-Value="Expense.DepartmentsId" class="form-control" /> 
+                <ValidationMessage For="() => Expense.DepartmentsId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="date" class="form-label">Date:</label> 
+                <InputDate id="date" @bind-Value="Expense.Date" class="form-control" /> 
+                <ValidationMessage For="() => Expense.Date" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="paymentterms" class="form-label">PaymentTerms:</label> 
+                <InputNumber id="paymentterms" @bind-Value="Expense.PaymentTerms" class="form-control" /> 
+                <ValidationMessage For="() => Expense.PaymentTerms" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="duedate" class="form-label">DueDate:</label> 
+                <InputDate id="duedate" @bind-Value="Expense.DueDate" class="form-control" /> 
+                <ValidationMessage For="() => Expense.DueDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="cost" class="form-label">Cost:</label> 
+                <InputNumber id="cost" @bind-Value="Expense.Cost" class="form-control" /> 
+                <ValidationMessage For="() => Expense.Cost" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="currencytype" class="form-label">CurrencyType:</label> 
+                <InputNumber id="currencytype" @bind-Value="Expense.CurrencyType" class="form-control" /> 
+                <ValidationMessage For="() => Expense.CurrencyType" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="exchangerate" class="form-label">ExchangeRate:</label> 
+                <InputNumber id="exchangerate" @bind-Value="Expense.ExchangeRate" class="form-control" /> 
+                <ValidationMessage For="() => Expense.ExchangeRate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="neteuro" class="form-label">NetEuro:</label> 
+                <InputNumber id="neteuro" @bind-Value="Expense.NetEuro" class="form-control" /> 
+                <ValidationMessage For="() => Expense.NetEuro" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="vat" class="form-label">Vat:</label> 
+                <InputNumber id="vat" @bind-Value="Expense.Vat" class="form-control" /> 
+                <ValidationMessage For="() => Expense.Vat" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="vateuro" class="form-label">VatEuro:</label> 
+                <InputNumber id="vateuro" @bind-Value="Expense.VatEuro" class="form-control" /> 
+                <ValidationMessage For="() => Expense.VatEuro" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="total" class="form-label">Total:</label> 
+                <InputNumber id="total" @bind-Value="Expense.Total" class="form-control" /> 
+                <ValidationMessage For="() => Expense.Total" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="uploaded" class="form-label">Uploaded:</label> 
+                <InputCheckbox id="uploaded" @bind-Value="Expense.Uploaded" class="form-check-input" /> 
+                <ValidationMessage For="() => Expense.Uploaded" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="paid" class="form-label">Paid:</label> 
+                <InputCheckbox id="paid" @bind-Value="Expense.Paid" class="form-check-input" /> 
+                <ValidationMessage For="() => Expense.Paid" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="paymentdate" class="form-label">PaymentDate:</label> 
+                <InputDate id="paymentdate" @bind-Value="Expense.PaymentDate" class="form-control" /> 
+                <ValidationMessage For="() => Expense.PaymentDate" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/expenses">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Expense Expense { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddExpense()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Expenses.Add(Expense);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/expenses");
+    }
+}

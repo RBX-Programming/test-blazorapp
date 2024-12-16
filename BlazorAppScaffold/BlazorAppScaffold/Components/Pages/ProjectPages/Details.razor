@@ -1,0 +1,78 @@
+﻿@page "/projects/details"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Project</h2>
+    <hr />
+    @if (project is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Id</dt>
+            <dd class="col-sm-10">@project.Id</dd>
+            <dt class="col-sm-2">Date</dt>
+            <dd class="col-sm-10">@project.Date</dd>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@project.Description</dd>
+            <dt class="col-sm-2">BranchId</dt>
+            <dd class="col-sm-10">@project.BranchId</dd>
+            <dt class="col-sm-2">ProjectStatusId</dt>
+            <dd class="col-sm-10">@project.ProjectStatusId</dd>
+            <dt class="col-sm-2">ClientShortName</dt>
+            <dd class="col-sm-10">@project.ClientShortName</dd>
+            <dt class="col-sm-2">ManufacturerId</dt>
+            <dd class="col-sm-10">@project.ManufacturerId</dd>
+            <dt class="col-sm-2">LocationId</dt>
+            <dd class="col-sm-10">@project.LocationId</dd>
+            <dt class="col-sm-2">StartDate</dt>
+            <dd class="col-sm-10">@project.StartDate</dd>
+            <dt class="col-sm-2">FinishDate</dt>
+            <dd class="col-sm-10">@project.FinishDate</dd>
+            <dt class="col-sm-2">Models</dt>
+            <dd class="col-sm-10">@project.Models</dd>
+            <dt class="col-sm-2">Plcs</dt>
+            <dd class="col-sm-10">@project.Plcs</dd>
+            <dt class="col-sm-2">Robots</dt>
+            <dd class="col-sm-10">@project.Robots</dd>
+            <dt class="col-sm-2">Revenue</dt>
+            <dd class="col-sm-10">@project.Revenue</dd>
+            <dt class="col-sm-2">ProjectOwner</dt>
+            <dd class="col-sm-10">@project.ProjectOwner</dd>
+            <dt class="col-sm-2">ProjectManager</dt>
+            <dd class="col-sm-10">@project.ProjectManager</dd>
+            <dt class="col-sm-2">ProjectTypeId</dt>
+            <dd class="col-sm-10">@project.ProjectTypeId</dd>
+        </dl>
+        <div>
+            <a href="@($"/projects/edit?projectname={project.ProjectName}")">Edit</a> |
+            <a href="@($"/projects")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Project? project;
+
+    [SupplyParameterFromQuery]
+    private string ProjectName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        project = await context.Projects.FirstOrDefaultAsync(m => m.ProjectName == ProjectName);
+
+        if (project is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

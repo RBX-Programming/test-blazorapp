@@ -1,0 +1,134 @@
+﻿@page "/suppliers/edit"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Supplier</h2>
+<hr />
+@if (Supplier is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Supplier" OnValidSubmit="UpdateSupplier" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Supplier.SupplierShortName" value="@Supplier.SupplierShortName" />
+                <div class="mb-3">
+                    <label for="id" class="form-label">Id:</label>
+                    <InputNumber id="id" @bind-Value="Supplier.Id" class="form-control" />
+                    <ValidationMessage For="() => Supplier.Id" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="supplierfullname" class="form-label">SupplierFullName:</label>
+                    <InputText id="supplierfullname" @bind-Value="Supplier.SupplierFullName" class="form-control" />
+                    <ValidationMessage For="() => Supplier.SupplierFullName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="supplierbranch" class="form-label">SupplierBranch:</label>
+                    <InputNumber id="supplierbranch" @bind-Value="Supplier.SupplierBranch" class="form-control" />
+                    <ValidationMessage For="() => Supplier.SupplierBranch" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="supplierreg" class="form-label">SupplierReg:</label>
+                    <InputText id="supplierreg" @bind-Value="Supplier.SupplierReg" class="form-control" />
+                    <ValidationMessage For="() => Supplier.SupplierReg" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="supplieraddress" class="form-label">SupplierAddress:</label>
+                    <InputText id="supplieraddress" @bind-Value="Supplier.SupplierAddress" class="form-control" />
+                    <ValidationMessage For="() => Supplier.SupplierAddress" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="city" class="form-label">City:</label>
+                    <InputText id="city" @bind-Value="Supplier.City" class="form-control" />
+                    <ValidationMessage For="() => Supplier.City" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="countryid" class="form-label">CountryId:</label>
+                    <InputNumber id="countryid" @bind-Value="Supplier.CountryId" class="form-control" />
+                    <ValidationMessage For="() => Supplier.CountryId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="supplieraccount" class="form-label">SupplierAccount:</label>
+                    <InputText id="supplieraccount" @bind-Value="Supplier.SupplierAccount" class="form-control" />
+                    <ValidationMessage For="() => Supplier.SupplierAccount" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="supplierswift" class="form-label">SupplierSwift:</label>
+                    <InputText id="supplierswift" @bind-Value="Supplier.SupplierSwift" class="form-control" />
+                    <ValidationMessage For="() => Supplier.SupplierSwift" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="crmid" class="form-label">CrmId:</label>
+                    <InputNumber id="crmid" @bind-Value="Supplier.CrmId" class="form-control" />
+                    <ValidationMessage For="() => Supplier.CrmId" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/suppliers">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string SupplierShortName { get; set; }
+
+    [SupplyParameterFromForm]
+    private Supplier? Supplier { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Supplier ??= await context.Suppliers.FirstOrDefaultAsync(m => m.SupplierShortName == SupplierShortName);
+
+        if (Supplier is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateSupplier()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Supplier!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!SupplierExists(Supplier!.SupplierShortName))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/suppliers");
+    }
+
+    private bool SupplierExists(string suppliershortname)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Suppliers.Any(e => e.SupplierShortName == suppliershortname);
+    }
+}

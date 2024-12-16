@@ -1,0 +1,45 @@
+﻿@page "/invoicecopayers"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="invoicecopayers/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredInvoices">
+    <PropertyColumn Property="invoicecopayer => invoicecopayer.CoPayersNumber" Sortable="true">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="invoiceFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="invoicecopayer => invoicecopayer.ClientShortName" />
+
+    <TemplateColumn Context="invoicecopayer">
+        <a href="@($"invoicecopayers/edit?id={invoicecopayer.Id}")">Edit</a> |
+        <a href="@($"invoicecopayers/details?id={invoicecopayer.Id}")">Details</a> |
+        <a href="@($"invoicecopayers/delete?id={invoicecopayer.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+
+@code {
+    private BlazorAppContext context = default!;
+    string invoiceFilter = string.Empty;
+    IQueryable<InvoiceCoPayer> FilteredInvoices => context.InvoiceCoPayers.Where(invoice => invoice.CoPayersNumber.ToString().Contains(invoiceFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

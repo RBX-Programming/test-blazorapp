@@ -1,0 +1,79 @@
+﻿@page "/extemployees/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>ExtEmployee</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="ExtEmployee" OnValidSubmit="AddExtEmployee" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="active" class="form-label">Active:</label> 
+                <InputCheckbox id="active" @bind-Value="ExtEmployee.Active" class="form-check-input" /> 
+                <ValidationMessage For="() => ExtEmployee.Active" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="ExtEmployee.Name" class="form-control" /> 
+                <ValidationMessage For="() => ExtEmployee.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label> 
+                <InputText id="email" @bind-Value="ExtEmployee.Email" class="form-control" /> 
+                <ValidationMessage For="() => ExtEmployee.Email" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone:</label> 
+                <InputText id="phone" @bind-Value="ExtEmployee.Phone" class="form-control" /> 
+                <ValidationMessage For="() => ExtEmployee.Phone" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="hourlycost" class="form-label">HourlyCost:</label> 
+                <InputNumber id="hourlycost" @bind-Value="ExtEmployee.HourlyCost" class="form-control" /> 
+                <ValidationMessage For="() => ExtEmployee.HourlyCost" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="extrahourlycost" class="form-label">ExtraHourlyCost:</label> 
+                <InputNumber id="extrahourlycost" @bind-Value="ExtEmployee.ExtraHourlyCost" class="form-control" /> 
+                <ValidationMessage For="() => ExtEmployee.ExtraHourlyCost" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="userid" class="form-label">UserId:</label> 
+                <InputText id="userid" @bind-Value="ExtEmployee.UserId" class="form-control" /> 
+                <ValidationMessage For="() => ExtEmployee.UserId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="branchid" class="form-label">BranchId:</label> 
+                <InputNumber id="branchid" @bind-Value="ExtEmployee.BranchId" class="form-control" /> 
+                <ValidationMessage For="() => ExtEmployee.BranchId" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/extemployees">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private ExtEmployee ExtEmployee { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddExtEmployee()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.ExtEmployees.Add(ExtEmployee);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/extemployees");
+    }
+}

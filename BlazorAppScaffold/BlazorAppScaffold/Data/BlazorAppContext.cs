@@ -594,9 +594,8 @@ public partial class BlazorAppContext : DbContext
 
         modelBuilder.Entity<Outsourcing>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("outsourcing", "erp_dev");
+
+            entity.HasKey(e => e.Id).HasName("pk_outsourcing");
 
             entity.HasIndex(e => e.SupplierShortName, "IX_outsourcing_supplier_short_name");
 

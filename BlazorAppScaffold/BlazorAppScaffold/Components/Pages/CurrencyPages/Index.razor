@@ -1,0 +1,43 @@
+﻿@page "/currencies"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="currencies/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredCoins">
+    <PropertyColumn Property="currency => currency.Coin" Sortable="true">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="coinFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    <TemplateColumn Context="currency">
+        <a href="@($"currencies/edit?id={currency.Id}")">Edit</a> |
+        <a href="@($"currencies/details?id={currency.Id}")">Details</a> |
+        <a href="@($"currencies/delete?id={currency.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string coinFilter = string.Empty;
+    IQueryable<Currency> FilteredCoins => context.Currencies.Where(coin => coin.Coin.Contains(coinFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

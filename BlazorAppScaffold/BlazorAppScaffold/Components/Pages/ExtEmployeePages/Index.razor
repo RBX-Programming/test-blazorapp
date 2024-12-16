@@ -1,0 +1,50 @@
+﻿@page "/extemployees"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="extemployees/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredEmployees">
+    <PropertyColumn Property="extemployee => extemployee.Active" />
+    <PropertyColumn Property="extemployee => extemployee.Name" Sortable="true" >
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="employeeFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="extemployee => extemployee.Email" />
+    <PropertyColumn Property="extemployee => extemployee.Phone" />
+    <PropertyColumn Property="extemployee => extemployee.HourlyCost" />
+    <PropertyColumn Property="extemployee => extemployee.ExtraHourlyCost" />
+    <PropertyColumn Property="extemployee => extemployee.UserId" Sortable="true" />
+    <PropertyColumn Property="extemployee => extemployee.BranchId" />
+
+    <TemplateColumn Context="extemployee">
+        <a href="@($"extemployees/edit?id={extemployee.Id}")">Edit</a> |
+        <a href="@($"extemployees/details?id={extemployee.Id}")">Details</a> |
+        <a href="@($"extemployees/delete?id={extemployee.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string employeeFilter = string.Empty;
+    IQueryable<ExtEmployee> FilteredEmployees => context.ExtEmployees.Where(employee => employee.Name.Contains(employeeFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

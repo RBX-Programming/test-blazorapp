@@ -1,0 +1,59 @@
+﻿@page "/projects"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="projects/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredProjects">
+    <PropertyColumn Property="project => project.Id" Sortable="true"/>
+    <PropertyColumn Property="project => project.Date" />
+    <PropertyColumn Property="project => project.Description" />
+    <PropertyColumn Property="project => project.BranchId" />
+    <PropertyColumn Property="project => project.ProjectStatusId" Sortable="true"/>
+    <PropertyColumn Property="project => project.ClientShortName" >
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="projectFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="project => project.ManufacturerId" Sortable="true"/>
+    <PropertyColumn Property="project => project.LocationId" />
+    <PropertyColumn Property="project => project.StartDate" />
+    <PropertyColumn Property="project => project.FinishDate" />
+    <PropertyColumn Property="project => project.Models" />
+    <PropertyColumn Property="project => project.Plcs" />
+    <PropertyColumn Property="project => project.Robots" />
+    <PropertyColumn Property="project => project.Revenue" />
+    <PropertyColumn Property="project => project.ProjectOwner" />
+    <PropertyColumn Property="project => project.ProjectManager" />
+    <PropertyColumn Property="project => project.ProjectTypeId" Sortable="true"/>
+
+    <TemplateColumn Context="project">
+        <a href="@($"projects/edit?projectname={project.ProjectName}")">Edit</a> |
+        <a href="@($"projects/details?projectname={project.ProjectName}")">Details</a> |
+        <a href="@($"projects/delete?projectname={project.ProjectName}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string projectFilter = string.Empty;
+    IQueryable<Project> FilteredProjects => context.Projects.Where(project => project.ClientShortName.Contains(projectFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

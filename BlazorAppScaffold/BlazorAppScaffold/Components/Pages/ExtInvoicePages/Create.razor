@@ -1,0 +1,144 @@
+﻿@page "/extinvoices/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorAppScaffold.Models
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>ExtInvoice</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="ExtInvoice" OnValidSubmit="AddExtInvoice" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="id" class="form-label">Id:</label> 
+                <InputNumber id="id" @bind-Value="ExtInvoice.Id" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.Id" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="rbxponumber" class="form-label">RbxPoNumber:</label> 
+                <InputText id="rbxponumber" @bind-Value="ExtInvoice.RbxPoNumber" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.RbxPoNumber" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="branchid" class="form-label">BranchId:</label> 
+                <InputNumber id="branchid" @bind-Value="ExtInvoice.BranchId" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.BranchId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="suppliershortname" class="form-label">SupplierShortName:</label> 
+                <InputText id="suppliershortname" @bind-Value="ExtInvoice.SupplierShortName" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.SupplierShortName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="projectname" class="form-label">ProjectName:</label> 
+                <InputText id="projectname" @bind-Value="ExtInvoice.ProjectName" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.ProjectName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="comments" class="form-label">Comments:</label> 
+                <InputText id="comments" @bind-Value="ExtInvoice.Comments" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.Comments" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="expirationdate" class="form-label">ExpirationDate:</label> 
+                <InputDate id="expirationdate" @bind-Value="ExtInvoice.ExpirationDate" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.ExpirationDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="paymentterms" class="form-label">PaymentTerms:</label> 
+                <InputNumber id="paymentterms" @bind-Value="ExtInvoice.PaymentTerms" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.PaymentTerms" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="duedate" class="form-label">DueDate:</label> 
+                <InputDate id="duedate" @bind-Value="ExtInvoice.DueDate" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.DueDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="totalnet" class="form-label">TotalNet:</label> 
+                <InputNumber id="totalnet" @bind-Value="ExtInvoice.TotalNet" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.TotalNet" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="currencytype" class="form-label">CurrencyType:</label> 
+                <InputNumber id="currencytype" @bind-Value="ExtInvoice.CurrencyType" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.CurrencyType" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="exchangerate" class="form-label">ExchangeRate:</label> 
+                <InputNumber id="exchangerate" @bind-Value="ExtInvoice.ExchangeRate" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.ExchangeRate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="neteuro" class="form-label">NetEuro:</label> 
+                <InputNumber id="neteuro" @bind-Value="ExtInvoice.NetEuro" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.NetEuro" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="vat" class="form-label">Vat:</label> 
+                <InputNumber id="vat" @bind-Value="ExtInvoice.Vat" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.Vat" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="totaleuro" class="form-label">TotalEuro:</label> 
+                <InputNumber id="totaleuro" @bind-Value="ExtInvoice.TotalEuro" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.TotalEuro" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="departmentsid" class="form-label">DepartmentsId:</label> 
+                <InputNumber id="departmentsid" @bind-Value="ExtInvoice.DepartmentsId" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.DepartmentsId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="uploaded" class="form-label">Uploaded:</label> 
+                <InputCheckbox id="uploaded" @bind-Value="ExtInvoice.Uploaded" class="form-check-input" /> 
+                <ValidationMessage For="() => ExtInvoice.Uploaded" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="paid" class="form-label">Paid:</label> 
+                <InputCheckbox id="paid" @bind-Value="ExtInvoice.Paid" class="form-check-input" /> 
+                <ValidationMessage For="() => ExtInvoice.Paid" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="paymentdate" class="form-label">PaymentDate:</label> 
+                <InputDate id="paymentdate" @bind-Value="ExtInvoice.PaymentDate" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.PaymentDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="paymentdays" class="form-label">PaymentDays:</label> 
+                <InputNumber id="paymentdays" @bind-Value="ExtInvoice.PaymentDays" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.PaymentDays" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="concept" class="form-label">Concept:</label> 
+                <InputText id="concept" @bind-Value="ExtInvoice.Concept" class="form-control" /> 
+                <ValidationMessage For="() => ExtInvoice.Concept" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/extinvoices">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private ExtInvoice ExtInvoice { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddExtInvoice()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.ExtInvoices.Add(ExtInvoice);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/extinvoices");
+    }
+}

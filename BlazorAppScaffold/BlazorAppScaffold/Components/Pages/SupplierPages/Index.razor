@@ -1,0 +1,53 @@
+﻿@page "/suppliers"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorAppScaffold.Models
+@using BlazorAppScaffold.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorAppScaffold.Data.BlazorAppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="suppliers/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredSuppliers">
+    <PropertyColumn Property="supplier => supplier.Id" Sortable="true"/>
+    <PropertyColumn Property="supplier => supplier.SupplierFullName" >
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="supplierFilter" @bind:event="oninput" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    <PropertyColumn Property="supplier => supplier.SupplierBranch" />
+    <PropertyColumn Property="supplier => supplier.SupplierReg" />
+    <PropertyColumn Property="supplier => supplier.SupplierAddress" />
+    <PropertyColumn Property="supplier => supplier.City" />
+    <PropertyColumn Property="supplier => supplier.CountryId" Sortable="true"/>
+    <PropertyColumn Property="supplier => supplier.SupplierAccount" />
+    <PropertyColumn Property="supplier => supplier.SupplierSwift" />
+    <PropertyColumn Property="supplier => supplier.CrmId" />
+
+    <TemplateColumn Context="supplier">
+        <a href="@($"suppliers/edit?suppliershortname={supplier.SupplierShortName}")">Edit</a> |
+        <a href="@($"suppliers/details?suppliershortname={supplier.SupplierShortName}")">Details</a> |
+        <a href="@($"suppliers/delete?suppliershortname={supplier.SupplierShortName}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorAppContext context = default!;
+    string supplierFilter = string.Empty;
+    IQueryable<Supplier> FilteredSuppliers => context.Suppliers.Where(supplier => supplier.SupplierFullName.Contains(supplierFilter));
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
